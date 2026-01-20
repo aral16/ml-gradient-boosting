@@ -1,0 +1,51 @@
+training:
+  training_mode: cv
+  model:
+    name: model.joblib
+    type: light_gbm
+    objective: binary
+    boosting_type: gbdt
+    n_estimators: 500
+    learning_rate: 0.05
+    max_depth: 6
+    num_leaves: 31
+    min_child_samples: 30
+    subsample: 0.8
+    colsample_bytree: 0.8
+    class_weight: balanced
+    n_jobs: -1
+  cv:
+    folds: 5
+    Accuracy_mean: 0.8942189383930902
+    Accuracy_std: 0.00579235767586689
+    Precision_mean: 0.6485057466012605
+    Precision_std: 0.015348747784271139
+    Recall_mean: 0.6908742802839734
+    Recall_std: 0.026467378463782713
+    F1_mean: 0.6689706194164
+    F1_std: 0.020090212587231118
+    ROC_AUC_mean: 0.9232344718406873
+    ROC_AUC_std: 0.006644940450412517
+    PR_AUC_mean: 0.7246599504499842
+    PR_AUC_std: 0.029216552389762326
+  threshold_selection:
+    method: cv
+    chosen_threshold: 0.22702840069914226
+    details:
+      type: min_recall
+      min_recall: 0.8
+  model_path: models/model.joblib
+threshold: 0.22702840069914226
+threshold_method: cv
+test:
+  Accuracy: 0.8526628818599622
+  Precision: 0.5155709342560554
+  Recall: 0.7814685314685315
+  F1: 0.621264767199444
+  ConfusionMatrix:
+  - - 2707
+    - 420
+  - - 125
+    - 447
+  PR_AUC: 0.6974214312073954
+  ROC_AUC: 0.914705777113836
