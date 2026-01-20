@@ -19,7 +19,7 @@ from sklearn.metrics import (
     precision_recall_curve,
 )
 from sklearn.model_selection import StratifiedKFold
-from sklearn.ensemble import RandomForestClassifier
+from lightgbm import LGBMClassifier
 
 def load_config(config_path: str) -> dict:
     with open(config_path, "r", encoding="utf-8") as f:
@@ -53,14 +53,17 @@ def classification_metrics(y_true, y_pred, y_proba=None) -> dict:
     return out
 
 
-def make_model(cfg: dict) -> RandomForestClassifier:
+def make_model(cfg: dict) -> LGBMClassifier:
     m = cfg.get("model", {})
-    return RandomForestClassifier(
+    return LGBMClassifier(
         random_state=cfg["data"]["random_state"],
         max_depth=m.get("max_depth", None),
         n_estimators=m.get("n_estimators", 1),
-        min_samples_leaf=m.get("min_samples_leaf", 2),
-        oob_score=m.get("oob_score", 2),
+        num_leaves=m.get("num_leaves", 15),
+        min_child_samples=m.get("min_child_samples"),
+        subsample=m.get("subsample", 0.8),
+        colsample_bytree=m.get("colsample_bytree", 0.8),
+        n_jobs=m.get("n_jobs", -1),
         class_weight=m.get("class_weight", None),
     )
 

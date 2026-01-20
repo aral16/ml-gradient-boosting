@@ -1,0 +1,24 @@
+training:
+  training_mode: val
+  model:
+    name: model.joblib
+    type: light_gbm
+    objective: regression
+    boosting_type: gbdt
+    n_estimators: 800
+    learning_rate: 0.05
+    max_depth: 6
+    num_leaves: 31
+    min_child_samples: 40
+    subsample: 0.8
+    colsample_bytree: 0.8
+    n_jobs: -1
+  val:
+    MAE: 0.3246841430476481
+    RMSE: 0.47387742828345847
+    R2: 0.6439006573473394
+  model_path: models/model.joblib
+test:
+  MAE: 355.04933375290466
+  RMSE: 3149.7305515262665
+  R2: 0.02819766042372429

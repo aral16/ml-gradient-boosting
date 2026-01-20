@@ -1,5 +1,5 @@
 project:
-  name: "Gradient-boosting-Heart-disease"
+  name: "linear-regression-housing"
 
 paths:
   raw_dir: "data/raw"
@@ -9,44 +9,34 @@ paths:
   figures_dir: "reports/figures"
 
 data:
-  target_col: "Revenue"
-  log_target: false # Here Is False because we shouldn't log transform for any decision-tree model
+  target_col: "trip_duration"
+  log_target: true # Here Is True because the value are skewed, so we need to log transform the target value to reduce skewness.
+  id: "id"
   test_size: 0.30
   random_state: 42
 
 
 training:
-  mode: "cv"          # "cv" OR "val" cv =  cross validation
+  mode: "val"          # "cv" OR "val" cv = cross validation
   val_size: 0.2       # used only if mode="val" (split from train, not from full data)
   cv_folds: 5         # used only if mode="cv"
+
 
 model:
   name: "model.joblib"
   type: "light_gbm"
-  objective: "binary" # Cause it's binary classification problem
+  objective: "regression" # Cause it's a problem
   boosting_type: "gbdt" # boosting_type tells LightGBM how trees are combined during boosting.gbdt mean Gradient Boosted Decision Trees.gbdt train sequentially: Train a first tree → rough predictions, and then Compute errors (residuals / gradients), after that train next tree to correct those errors and Repeat 
-  n_estimators: 500 # Number of trees in the forest(More trees reduce vaiance,improve stability, but too many trees will slower the training). Each tree is a small correction to the model, so n_estimators is how many correction steps you allow.
+  n_estimators: 800 # Number of trees in the forest(More trees reduce vaiance,improve stability, but too many trees will slower the training). Each tree is a small correction to the model, so n_estimators is how many correction steps you allow.
   learning_rate: 0.05 # Smaller steps → better generalization
   max_depth: 6 # This is the Maximum depth of each tree, high depth captures complex interactions and lower depth smoother generalization.
   num_leaves: 31 # Controls tree complexity, Works well with depth ≤ 6.
-  min_child_samples: 30 # Prevents tiny noisy leaves, Crucial for imbalanced data
+  min_child_samples: 40 # Prevents tiny noisy leaves, Crucial for imbalanced data
   subsample: 0.8 # Adds randomness, Equivalent to “bagging inside boosting”
   colsample_bytree: 0.8 # Adds randomness, Equivalent to “bagging inside boosting”
-  class_weight: "balanced"
   n_jobs: -1
-
 
 
 evaluation:
   save_figures: true
-
-  # Threshold selection happens on VAL/OOF (not test)
-  threshold_selection:
-    method: cv          #  cv or "val"
-    strategy: min_recall  # "f1_max", "min_precision", "min_recall", "range" 
-    min_recall: 0.80
-
-    # optional if strategy: "range"
-    precision_range: [0.75, 0.90]
-    recall_range: [0.60, 0.85]
 

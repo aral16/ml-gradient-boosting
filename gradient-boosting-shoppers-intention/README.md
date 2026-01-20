@@ -1,4 +1,4 @@
-# Online Purchase Intent Prediction using Random Forest
+# Online Purchase Intent Prediction using Gradient Boosting
 
 ## Problem
 E-commerce platforms aim to identify browsing sessions that are likely to convert into purchases.  
@@ -15,25 +15,26 @@ Source: UCI Online Shoppers Purchasing Intention
 
 The dataset is highly imbalanced (~15% buyers).
 
-## Why Random Forest?
-A single shallow Decision Tree captures interpretable rules but struggles with recall stability and class imbalance.  
-Random Forest improves prediction by:
+## Why Gradient Boosting?
+Random Forest provides strong baseline performance, but Gradient Boosting is designed to further improve:
 
-- Training many trees on bootstrapped samples  
-- Randomizing feature selection at each split  
-- Aggregating predictions to reduce variance  
-- Providing more robust probability estimates  
+- Ranking quality (PR-AUC / ROC-AUC)
+- Minority class detection
+- Learning from hard-to-classify sessions
 
-This makes it ideal for behavioral classification on tabular data.
+Gradient Boosting trains trees sequentially, where each new tree focuses on correcting errors made by previous ones, making it particularly effective for imbalanced behavioral data.
 
 ## Model
-RandomForestClassifier  
+LightGBMClassifier (Gradient Boosting)
 
-- n_estimators = 200  
+- n_estimators = 500  
+- learning_rate = 0.05  
 - max_depth = 6  
-- min_samples_leaf = 5  
+- num_leaves = 31  
+- min_child_samples = 30  
+- subsample = 0.8  
+- colsample_bytree = 0.8  
 - class_weight = balanced  
-- oob_score = True  
 - Stratified 5-fold Cross-Validation  
 
 ## Threshold Strategy
@@ -43,7 +44,7 @@ Goal:
 - Maintain Recall ≥ 80% (detect most buyers)
 - Maximize Precision under that constraint
 
-Chosen threshold: 0.551
+Chosen threshold: 0.227
 
 
 ---
@@ -51,63 +52,64 @@ Chosen threshold: 0.551
 ## Cross-Validation Performance
 
 | Metric | Mean |
-|--------|------|
-Accuracy | 0.875 |
-Precision | 0.564 |
-Recall | 0.832 |
-F1 | 0.673 |
-ROC-AUC | 0.925 |
-PR-AUC | 0.721 |
+|------|------|
+Accuracy | 0.894 |
+Precision | 0.649 |
+Recall | 0.691 |
+F1 | 0.669 |
+ROC-AUC | 0.923 |
+PR-AUC | 0.725 |
 
 ---
 
 ## Test Performance (Frozen Threshold)
 
 | Metric | Value |
-|--------|-------|
-Accuracy | 0.872 |
-Precision | 0.564 |
-Recall | 0.752 |
-F1 | 0.644 |
+|------|------|
+Accuracy | 0.853 |
+Precision | 0.516 |
+Recall | 0.781 |
+F1 | 0.621 |
 ROC-AUC | 0.915 |
-PR-AUC | 0.680 |
+PR-AUC | 0.697 |
 
 Confusion Matrix:
 
-[[2794, 333],
-[142, 430]]
+[[2707, 420],
+[125, 447]]
 
 
 ---
 
-## Comparison vs Decision Tree
+## Comparison vs Random Forest
 
-| Metric | Decision Tree | Random Forest |
-|--------|---------------|---------------|
-Accuracy | 0.867 | **0.872** |
-Precision | 0.550 | **0.564** |
-Recall | 0.764 | **0.752** |
-ROC-AUC | 0.899 | **0.915** |
-PR-AUC | 0.627 | **0.680** |
+| Metric | Random Forest | Gradient Boosting |
+|------|---------------|------------------|
+Accuracy | **0.872** | 0.853 |
+Precision | **0.564** | 0.516 |
+Recall | 0.752 | **0.781** |
+F1 | **0.644** | 0.621 |
+ROC-AUC | 0.915 | 0.915 |
+PR-AUC | 0.680 | **0.697** |
 
-Random Forest provides stronger ranking performance and more stable recall across folds.
+Gradient Boosting improves ranking quality and recall, while Random Forest provides more balanced precision.
 
 ---
 
 ## Key Insights
-- Random Forest captures complex behavioral interactions missed by a shallow tree.
-- Probability estimates are smoother and more reliable.
-- PR-AUC improvement shows better detection of rare purchasing sessions.
-- Ensemble learning improves generalization on imbalanced tabular data.
+- Gradient Boosting excels at ranking rare purchasing sessions.
+- Lower decision thresholds improve recall at the cost of precision.
+- PR-AUC improvements indicate better buyer prioritization.
+- Model choice depends on business objective: coverage vs cost.
 
 ## Limitations
-- No temporal sequence modeling
-- Dataset imbalance still impacts precision
-- No direct revenue/profit optimization
+- No temporal session modeling
+- Class imbalance remains challenging
+- No direct profit-based optimization
 
 ## Conclusion
-Random Forest significantly improves behavioral purchase prediction by reducing variance and increasing recall stability across sessions.  
-This project highlights how ensemble models outperform interpretable trees in real-world e-commerce classification tasks.
+Gradient Boosting provides stronger ranking performance and improved buyer detection compared to Random Forest.  
+This project highlights how boosting models trade precision for recall and why PR-AUC is the appropriate metric for imbalanced e-commerce prediction tasks.
 
 ---
 
