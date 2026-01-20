@@ -1,0 +1,29 @@
+training_mode: cv
+model:
+  name: model.joblib
+  type: gradient_boosting
+  n_estimators: 200
+  max_depth: 6
+  learning_rate: 0.05
+  subsample: 0.8
+cv:
+  folds: 5
+  Accuracy_mean: 0.7831672203765228
+  Accuracy_std: 0.05552387530014581
+  Precision_mean: 0.7704906204906206
+  Precision_std: 0.058754927395640935
+  Recall_mean: 0.7542105263157894
+  Recall_std: 0.10617369347251499
+  F1_mean: 0.7589208849414242
+  F1_std: 0.06797974194463681
+  ROC_AUC_mean: 0.8897025171624714
+  ROC_AUC_std: 0.02647153197771001
+  PR_AUC_mean: 0.8981721840480803
+  PR_AUC_std: 0.04200577895489505
+threshold_selection:
+  method: cv
+  chosen_threshold: 0.1779861894848533
+  details:
+    type: min_recall
+    min_recall: 0.8
+model_path: models/model.joblib
